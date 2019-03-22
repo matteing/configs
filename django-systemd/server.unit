@@ -1,0 +1,20 @@
+[Unit]
+Description=makerlog api daemon
+After=network.target
+
+[Service]
+User=sergio
+Group=www-data
+WorkingDirectory=/home/sergio/server/makerlog2
+# ExecStart=/home/sergio/server/bin/daphne -u /home/sergio/server/makerlog.sock --verbosity 1 makerlog.asgi:application
+# ExecStart=/home/sergio/server/bin/uvicorn makerlog.wsgi:application -k uvicorn.workers.UvicornWorker --uds unix:/home/sergio/server/makerlog.sock --log-level debug
+# ExecStart=/home/sergio/server/bin/uvicorn -k uvicorn.workers.UvicornWorker --uds unix:/home/sergio/server/makerlog.sock --log-level debug makerlog.wsgi:application
+ExecStart=/home/sergio/server/bin/gunicorn --workers 3 --bind unix:/home/sergio/server/makerlog.sock -k uvicorn.workers.UvicornWorker makerlog.asgi:application
+# ExecStart=/home/sergio/server/bin/uvicorn --log-level debug --uds /home/sergio/server/makerlog.sock --proxy-headers makerlog.asgi:application
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=5s
+# PIDFile=/var/run/makerlog-server.pid
+
+[Install]
+WantedBy=multi-user.target
